@@ -2,8 +2,15 @@
 <html lang="en"> 
 <head> 
     <meta charset="UTF-8" />
-    <title>CITE VERTE</title>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <title>teste de ces mort</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.54.0/dist/phaser.js"></script>
+    <script src="SceneOne.js"></script>
+    <script src="SceneTwo.js"></script>
+    <script src="SceneThree.js"></script>
+    <script src="Tuto.js"></script>
+    <script src="Ville.js"></script>
+    <script src="BatimentBreche.js"></script>
+    <script src="BatimentClef.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -14,249 +21,25 @@
 
 <script type="text/javascript">
 
-var level = new Phaser.Class({
-
-    Extends: Phaser.Scene,
-
-    initialize:
-
-    function level ()
-    {
-        Phaser.Scene.call(this, { key: 'level' });
-    },
-
-    preload: function ()
-    {
-        this.load.spritesheet('lusan_anime', 'assets/spritesheet/Actor1.png', { frameWidth: 48, frameHeight: 48 });
-        
-        this.load.image('tiles','assets/tiles/carte_teste.png');
-        this.load.tilemapTiledJSON('map','assets/tiles/carte_teste.json');
-    },
-
-    create: function ()
-    {
-        const map = this.make.tilemap({key : 'map'});
-        const tileset = map.addTilesetImage('carte_teste','tiles');
-        
-        map.createDynamicLayer('sol',tileset, 0, 0);
-        mur = map.createDynamicLayer('mur',tileset, 0, 0);
-        
-        mur.setCollisionByExclusion(-1,true)
-    
-        mur.setCollisionByProperty({ collides: true });
-
-        player = this.physics.add.sprite(500, 100, 'lusan_anime');
-        this.physics.add.collider(player, mur);
-        this.anims.create({
-            key: 'course',
-            frames: this.anims.generateFrameNumbers('lusan_anime', { start: 0, end: 15 }),
-            frameRate: 30,
-            repeat: -1
-        });
-
-        cursors = this.input.keyboard.createCursorKeys();
-        cursors2 = this.input.keyboard.addKeys('Z,Q,S,D,SPACE');
-        
-        this.input.once('pointerdown', function () {
-
-            console.log('From level to SceneC');
-
-            this.scene.start('sceneC');
-
-        }, this);
-    },
-    
-    update: function ()
-    {
-        if (cursors.left.isDown || cursors2.Q.isDown)
-        {   
-            if (gameOver == false){
-
-                player.setVelocityX(-200);
-                
-            }
-
-        }
-            
-        else if (cursors.right.isDown || cursors2.D.isDown)
-        {
-            if (gameOver == false){
-
-                player.setVelocityX(200);
-
-            }
-
-        }
-    
-        else if (cursors.down.isDown || cursors2.S.isDown){//direction vers le bas /////////////////////
-
-            player.setVelocityY(200);
-
-        }
-
-        else //position neutre /////////////////////
-        {
-            player.setVelocityX(0);
-            player.setVelocityY(0);
-
-        }
-
-                //saut /////////////////////
-        if (cursors.up.isDown || cursors2.Z.isDown)
-        {
-            player.setVelocityY(-200);
-
-         }
-    }
-    
-
-});
-    
-var SceneC = new Phaser.Class({
-
-    Extends: Phaser.Scene,
-
-    initialize:
-
-    function SceneC ()
-    {
-        Phaser.Scene.call(this, { key: 'sceneC' });
-    },
-
-    preload: function ()
-    {
-        this.load.image('mech', 'assets/tiles/carte_teste.png');
-    },
-
-    create: function ()
-    {
-        this.add.sprite(Phaser.Math.Between(0, 800), 300, 'mech');
-
-        this.input.once('pointerdown', function (event) {
-
-            console.log('From SceneC to level');
-
-            this.scene.start('level');
-
-        }, this);
-    }
-
-});
-    
 var config = {
     type: Phaser.AUTO,
+    parent: "game",
     width: 1280,
-    height: 720,
-    scene: [level, SceneC],
+    height: 780,
+    input: {
+        gamepad : true
+    },
     physics: {
         default: 'arcade',
         arcade: {
-           // gravity: { y: 0 },
-            debug: false
+            gravity: { y: 0 },
+            debug: true
         }
     },
-    
-    input : {gamepad:true},
-   /* scene: {
-        preload: preload,
-        create: create,
-        update: update
-    }*/
+    scene: [ SceneOne,BatimentBreche,BatimentClef, SceneTwo,SceneThree,Tuto,Ville]
 };
-    
 
-    
 var game = new Phaser.Game(config);
-
-var cursors;
-var cursors2;
-
-var gameOver = false;
-
-    
-/*function preload (){
-    
-    this.load.image('menu', 'assets/menu.png');
-    //this.load.spritesheet('mia_anime', 'assets/spritesheet/mia_anime.png', { frameWidth: 125, frameHeight: 150 });
-    this.load.spritesheet('lusan_anime', 'assets/spritesheet/Actor1.png', { frameWidth: 48, frameHeight: 48 });
-    
-    this.load.image('tiles','assets/tiles/carte_teste.png');
-    this.load.tilemapTiledJSON('map','assets/tiles/carte_teste.json');
-    
-};
-    
-function create (){
-    
-    //this.add.image(1280/2, 720/2, 'menu');
-    const map = this.make.tilemap({key : 'map'});
-    const tileset = map.addTilesetImage('carte_teste','tiles');
-    
-    map.createDynamicLayer('sol',tileset, 0, 0);
-    mur = map.createDynamicLayer('mur',tileset, 0, 0);
-    marchant = map.createDynamicLayer('marchant',tileset, 0, 0);
-    
-    mur.setCollisionByExclusion(-1,true)
-    
-    mur.setCollisionByProperty({ collides: true });
-    
-    player = this.physics.add.sprite(500, 100, 'lusan_anime');
-    this.physics.add.collider(player, mur);
-    this.anims.create({
-        key: 'course',
-        frames: this.anims.generateFrameNumbers('lusan_anime', { start: 0, end: 15 }),
-        frameRate: 30,
-        repeat: -1
-    });
-    
-    cursors = this.input.keyboard.createCursorKeys();
-    cursors2 = this.input.keyboard.addKeys('Z,Q,S,D,SPACE'); 
-    
-};
-    
-function update (){
-    
-    if (cursors.left.isDown || cursors2.Q.isDown)
-        {   
-            if (gameOver == false){
-
-                player.setVelocityX(-200);
-                
-            }
-
-        }
-            
-        else if (cursors.right.isDown || cursors2.D.isDown)
-        {
-            if (gameOver == false){
-
-                player.setVelocityX(200);
-
-            }
-
-        }
-    
-        else if (cursors.down.isDown || cursors2.S.isDown){//direction vers le bas /////////////////////
-
-            player.setVelocityY(200);
-
-        }
-
-        else //position neutre /////////////////////
-        {
-            player.setVelocityX(0);
-            player.setVelocityY(0);
-
-        }
-
-                //saut /////////////////////
-        if (cursors.up.isDown || cursors2.Z.isDown)
-        {
-            player.setVelocityY(-200);
-
-         }
-    
-};*/
-
 
 </script>
 

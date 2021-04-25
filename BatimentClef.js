@@ -1,61 +1,6 @@
-var player;
-var pv = 3;
-var pvMax = 3;
-var barreVie;
-var inventaire;
-
-var gamepad;
-var paddle;
-var padConnected;
-var pad;
-
-var recupclef = false;
-var coffre;
-var coffreOpen;
-
-var ville = false;
-
-var gameOver = false;
-
-var enemiesDirection;
-var enemiesVitesse = 200;
-
-var invincible = false;
-var resetCompteur = 200;
-var compteur = resetCompteur;
-var affichePV;
-var affichetest;
-var afficheSB;
-var aleatoire;
-
-var gauche = false;
-var droite = false;
-var dos = false;
-var face = false;
-var compteurAttaque = 60;
-var cursors;
-var cursors2;
-var vitesse = 200;
-
-var lootSubstance;
-var nbSubstance = 0;
-
-var breche = false;
-var brecheRecup = false;
-var itemBreche;
-
-var lootPv;
-
-var lootMine;
-var mine;
-var nbMine = 5;
-var mineMax = 5;
-var afficheMine;
-var zoneActionMine = 60;
-
-class SceneOne extends Phaser.Scene{
+class BatimentClef extends Phaser.Scene{
     constructor(){
-        super("SceneOne");
+        super("BatimentClef");
         this.pad = null;
     }
     init(data){
@@ -86,7 +31,7 @@ class SceneOne extends Phaser.Scene{
         this.load.image('inventaire_breche_clef','assets/inventaire/nbMine_nbSubstance_breche_clef.png');
 
         this.load.image('tiles','assets/tiles/carte_teste.png');
-        this.load.tilemapTiledJSON('map','assets/tiles/batiment_breche.json'); 
+        this.load.tilemapTiledJSON('map_clef','assets/tiles/batiment_clef.json'); 
     }
     create(){
         inventaire = this.add.image(1000,100,'inventaire') 
@@ -113,7 +58,7 @@ class SceneOne extends Phaser.Scene{
         affichePV = this.add.text(10, 30, 'pv : ' + pv, { fontSize: '32px', fill: '#48E14E' }).setScrollFactor(0).setDepth(1);
         afficheSB = this.add.text(10, 50, 'pv : ' + nbSubstance, { fontSize: '32px', fill: '#48E14E' }).setScrollFactor(0).setDepth(1);
 
-        const map = this.make.tilemap({key: 'map'});
+        const map = this.make.tilemap({key: 'map_clef'});
         const tileset = map.addTilesetImage('carte_teste', 'tiles');
         const terrain = map.createLayer('sol', tileset, 0, 0);
         const mur = map.createLayer('mur', tileset, 0, 0);
@@ -240,22 +185,8 @@ class SceneOne extends Phaser.Scene{
         cursors = this.input.keyboard.createCursorKeys();
         cursors2 = this.input.keyboard.addKeys('Z,Q,S,D,SPACE,A,E,SHIFT'); 
 
-    /////////////////////////////   
-    // ITEM BRECHE ///////////////
-    /////////////////////////////
-
-    const brecheObjects = map.getObjectLayer('breche').objects;
-    this.itemBreche = this.physics.add.group({
-        allowGravity: false
-    }); 
-
-    for (const itemBreche of brecheObjects) {
-
-        this.itemBreche.create(itemBreche.x, itemBreche.y, 'itembreche')
-            .setOrigin(0.5,0.5)
-            .setDepth(0.5)
-            .setScale(1)
-    }
+ ////// ITEM BRECHE ///////////////////////
+        itemBreche = this.physics.add.sprite(400, 100, 'itembreche')
 
       /////////////////////////////   
      // CAMERA ///////////////////
@@ -783,16 +714,14 @@ class SceneOne extends Phaser.Scene{
         ////// ITEM BRECHE ///////////////////////
 
         
-        this.physics.add.collider(this.itemBreche ,player, recupBreche, null,this);
+        this.physics.add.overlap(itemBreche, player, recupBreche,null, this);
 
-        function recupBreche(player,itemBreche){
+        function recupBreche(itemBreche,player){
             itemBreche.destroy();
             brecheRecup = true;
             
         }
 
-        ////// ITEM COFFRE ///////////////////////
-        
         this.physics.add.collider(this.coffres ,player, ouvreCoffre, null,this);
         function ouvreCoffre (player, coffre){
             coffre.destroy();
@@ -808,8 +737,6 @@ class SceneOne extends Phaser.Scene{
                 lootPv = this.physics.add.sprite(coffreOpen.x,coffreOpen.y, 'lootPv');
             }
         }
-
-        ////// ITEM CLEF ///////////////////////
 
         this.physics.add.collider(this.clef ,player, recupClef, null,this);
         function recupClef (player, clef){
