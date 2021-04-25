@@ -11,6 +11,7 @@
     <script src="Ville.js"></script>
     <script src="BatimentBreche.js"></script>
     <script src="BatimentClef.js"></script>
+    <script src="BatimentFin.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -36,7 +37,7 @@ var config = {
             debug: true
         }
     },
-    scene: [ SceneOne,BatimentBreche,BatimentClef, SceneTwo,SceneThree,Tuto,Ville]
+    scene: [ Tuto,BatimentBreche,BatimentFin,Ville, BatimentClef,SceneOne, SceneTwo,SceneThree]
 };
 
 var game = new Phaser.Game(config);

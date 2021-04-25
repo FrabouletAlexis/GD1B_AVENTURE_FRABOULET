@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="80" height="80" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="36">
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="80" height="80" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="36">
  <editorsettings>
-  <export target="carte_teste.json" format="json"/>
+  <export target="batiment_clef.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" name="carte_teste" tilewidth="16" tileheight="16" tilecount="88" columns="11">
   <image source="carte_teste.png" width="176" height="128"/>
@@ -665,4 +665,5 @@
    <point/>
   </object>
  </objectgroup>
+ <objectgroup id="11" name="breche"/>
 </map>

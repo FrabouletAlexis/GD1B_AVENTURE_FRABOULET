@@ -48,6 +48,28 @@
         }, 
         {
          "draworder":"topdown",
+         "id":6,
+         "name":"clef",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":7,
+         "name":"breche",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":4,
          "name":"enemie",
          "objects":[
@@ -83,8 +105,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":794.666666666667,
-                 "y":126.666666666667
+                 "x":794.667,
+                 "y":126.667
                 }, 
                 {
                  "height":0,
@@ -104,7 +126,7 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":6,
+ "nextlayerid":8,
  "nextobjectid":5,
  "orientation":"orthogonal",
  "renderorder":"right-down",

@@ -13,7 +13,19 @@ var recupclef = false;
 var coffre;
 var coffreOpen;
 
-var ville = false;
+var tutoVille = false;
+var villeTuto = false;
+
+var villeBreche = false;
+var villeBreche_2 = false;
+var brecheVille = false;
+var brecheCoffre = false;
+var villeClef = false;
+var clefVille = false;
+var finVille = false;
+var villeFin = false;
+var finSorti = false;
+var villeFin_2 =false;
 
 var gameOver = false;
 
@@ -792,7 +804,7 @@ class SceneOne extends Phaser.Scene{
         }
 
         ////// ITEM COFFRE ///////////////////////
-        
+
         this.physics.add.collider(this.coffres ,player, ouvreCoffre, null,this);
         function ouvreCoffre (player, coffre){
             coffre.destroy();

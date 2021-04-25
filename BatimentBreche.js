@@ -1,6 +1,7 @@
 class BatimentBreche extends Phaser.Scene{
     constructor(){
         super("BatimentBreche");
+        this.pad = null;
     }
     init(data){
     }
@@ -30,7 +31,7 @@ class BatimentBreche extends Phaser.Scene{
         this.load.image('inventaire_breche_clef','assets/inventaire/nbMine_nbSubstance_breche_clef.png');
 
         this.load.image('tiles','assets/tiles/carte_teste.png');
-        this.load.tilemapTiledJSON('map','assets/tiles/batiment_breche.json'); 
+        this.load.tilemapTiledJSON('map_Breche','assets/tiles/batiment_breche.json'); 
     }
     create(){
         inventaire = this.add.image(1000,100,'inventaire') 
@@ -57,7 +58,7 @@ class BatimentBreche extends Phaser.Scene{
         affichePV = this.add.text(10, 30, 'pv : ' + pv, { fontSize: '32px', fill: '#48E14E' }).setScrollFactor(0).setDepth(1);
         afficheSB = this.add.text(10, 50, 'pv : ' + nbSubstance, { fontSize: '32px', fill: '#48E14E' }).setScrollFactor(0).setDepth(1);
 
-        const map = this.make.tilemap({key: 'map'});
+        const map = this.make.tilemap({key: 'map_Breche'});
         const tileset = map.addTilesetImage('carte_teste', 'tiles');
         const terrain = map.createLayer('sol', tileset, 0, 0);
         const mur = map.createLayer('mur', tileset, 0, 0);
@@ -66,7 +67,14 @@ class BatimentBreche extends Phaser.Scene{
         mur.setCollisionByExclusion(-1, true);
         zone.setCollisionByExclusion(-1, true)
 
-        player = this.physics.add.sprite(500, 100, 'boomer_anime').setDepth(1);
+        if (villeBreche){
+            player = this.physics.add.sprite( 480,1060, 'boomer_anime').setDepth(1);
+        }
+        else if (villeBreche_2){
+            player = this.physics.add.sprite(2095, 1060, 'boomer_anime').setDepth(1);
+        }
+        //player = this.physics.add.sprite(2095, 1060, 'boomer_anime').setDepth(1);
+        
 
         this.physics.add.collider(player, mur);
         this.physics.add.collider(player, zone, changementZone, null, this);
@@ -171,12 +179,35 @@ class BatimentBreche extends Phaser.Scene{
             .setDepth(0.5)
             .setScale(1)
     }
-    
+    //manette
+    if (this.input.gamepad.total === 0){
+        this.input.gamepad.once('connected', function (pad, button, index) {
+            paddle = pad;
+            padConnected = true;
+        }); 
+    }
+    else {
+        paddle = this.input.gamepad.pad1;
+    }
         cursors = this.input.keyboard.createCursorKeys();
         cursors2 = this.input.keyboard.addKeys('Z,Q,S,D,SPACE,A,E,SHIFT'); 
 
- ////// ITEM BRECHE ///////////////////////
-        itemBreche = this.physics.add.sprite(400, 100, 'itembreche')
+    /////////////////////////////   
+    // ITEM BRECHE ///////////////
+    /////////////////////////////
+
+    const brecheObjects = map.getObjectLayer('breche').objects;
+    this.itemBreche = this.physics.add.group({
+        allowGravity: false
+    }); 
+
+    for (const itemBreche of brecheObjects) {
+
+        this.itemBreche.create(itemBreche.x, itemBreche.y, 'itembreche')
+            .setOrigin(0.5,0.5)
+            .setDepth(0.5)
+            .setScale(1)
+    }
 
       /////////////////////////////   
      // CAMERA ///////////////////
@@ -186,14 +217,28 @@ class BatimentBreche extends Phaser.Scene{
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         //this.cameras.main.zoom = 2;
 
+      /////////////////////////////   
+     // CHARGEMENT ///////////////
+    /////////////////////////////
+
         function changementZone(player, zone){
-            if (player.y >= 680 && player.x >= 400 && player.x <= 560 && recupclef){
-                this.scene.start("SceneThree");
+            if (player.y >= 1064 && player.x >= 410 && player.x <= 550){
+                this.scene.start("Ville");
                 console.log("changement");
+                brecheVille = true;
+                brecheCoffre = false;
+                villeTuto = false;
                 /*cursors.up.reset();
                 cursors.down.reset();
                 cursors.right.reset();
                 cursors.left.reset();*/
+            }
+            else if(player.y >= 1064 && player.x >= 2070 && player.x <= 2120){
+                this.scene.start("Ville");
+                console.log("changement");
+                brecheVille = false;
+                brecheCoffre = true;
+                villeTuto = false;
             }
         }
         
@@ -211,6 +256,11 @@ class BatimentBreche extends Phaser.Scene{
        
     }
     update(){
+        afficheMine.setText('tutoVille ' + tutoVille);
+        //afficheMine.setText('Nb Mine : ' + player.y);
+        afficheSB.setText('Nb Mine : ' + player.x);
+        const poseMine = Phaser.Input.Keyboard.JustDown(cursors2.E)
+        //const poseMinePad = Phaser.Input.paddle.justPressed(paddle.B)
 
         if(pv === 3)
         {
@@ -255,7 +305,11 @@ class BatimentBreche extends Phaser.Scene{
             .setDepth(1)
             .setScrollFactor(0);
         }
-        
+
+      /////////////////////////////   
+     // CONTROLE CLAVIER /////////
+    /////////////////////////////
+
         if (cursors.right.isDown){
             if (gameOver == false){
                 gauche = false;
@@ -351,10 +405,142 @@ class BatimentBreche extends Phaser.Scene{
                 player.setVelocityX((vitesse*0.7));
             }
         }
+      /////////////////////////////   
+     // CONTROLE PAD /////////////
+    /////////////////////////////
+    
+        this.input.gamepad.once('connected', function (pad) {
+            paddle = pad;
+            padConnected = true;
+        });
+        if (padConnected){
 
+            if (cursors.right.isDown || paddle.right ){
+                if (gameOver == false){
+                    gauche = false;
+                    droite = true;
+                    dos = false;
+                    face = false;
+                    player.setVelocityX(vitesse);
+                    player.anims.play('droite', true);
+                }
+            }
+            else if (cursors.left.isDown || paddle.left){
+                if (gameOver == false){
+                    gauche = true;
+                    droite = false;
+                    dos = false;
+                    face = false;
+                    player.setVelocityX(-vitesse);
+                    player.anims.play('gauche', true);
+                }
+                
+                
+            }
+            else if (cursors.right.isUp && cursors.left.isUp){
+                player.setVelocityX(0);
+                if (gameOver == false){
+                    if (gauche == true){
+                        player.anims.play('gauche_neutre', true);
+                    }
+                    else if (droite == true){
+                        player.anims.play('droite_neutre', true);
+                    }
+                }
+                
+            }
+            if (cursors.up.isDown || paddle.up){
+                if (gameOver == false){
+                    gauche = false;
+                    droite = false;
+                    dos = true;
+                    face = false;
+                    player.setVelocityY(-vitesse);
+                    player.anims.play('dos', true);
+                } 
+            }
+            else if (cursors.down.isDown || paddle.down){
+                if (gameOver == false){
+                    gauche = false;
+                    droite = false;
+                    dos = false;
+                    face = true;
+    
+                    player.setVelocityY(vitesse);
+                    player.anims.play('face', true);
+                }
+                
+                
+            }
+            else if (cursors.up.isUp && cursors.down.isUp){
+                player.setVelocityY(0);
+                if (gameOver == false){
+                    if (dos == true){
+                        player.anims.play('dos_neutre', true);
+                    }
+                    else if (face == true){
+                        player.anims.play('face_neutre', true);
+                    }
+                }
+                
+            }
+    
+            if (cursors.up.isDown && cursors.left.isDown || paddle.up && paddle.left){
+                if (gameOver == false){
+                    player.setVelocityY(-(vitesse*0.7));
+                    player.setVelocityX(-(vitesse*0.7));
+                }
+            }
+            else if (cursors.up.isDown && cursors.right.isDown || paddle.up && paddle.right){
+                if (gameOver == false){
+                    player.setVelocityY(-(vitesse*0.7));
+                    player.setVelocityX(vitesse*0.7);
+                }
+                
+            }
+            else if (cursors.down.isDown && cursors.left.isDown || paddle.down && paddle.left){
+                if (gameOver == false){
+                    player.setVelocityY(vitesse*0.7);
+                    player.setVelocityX(-(vitesse*0.7));
+                } 
+            }
+            else if ( cursors.down.isDown && cursors.right.isDown || paddle.down && paddle.right){
+                if (gameOver == false){
+                    player.setVelocityY(vitesse*0.7);
+                    player.setVelocityX((vitesse*0.7));
+                }
+            }
+
+            if (cursors2.Q.isDown && brecheRecup && gameOver == false || paddle.A && brecheRecup && gameOver == false){
+
+                barreVie = this.add.image(400,100,'bareDeVie_breche')
+                    .setDepth(1)
+                    .setScrollFactor(0); 
+    
+                player.setVelocity(0);
+                breche = true;
+                player.setTint(6754E1);
+    
+            }
+            else if (invincible == false){
+                breche = false;
+                player.setTint(0xffffff);
+            }
+
+            if (poseMine && gameOver == false || paddle.B.isDown && gameOver == false) {
+                if ( nbMine > 0){
+                    nbMine -= 1;
+                    afficheMine.setText('Nb Mine : ' + nbMine);
+                    mine = this.physics.add.sprite(player.x,player.y, 'mine');
+                    mine.body.height = zoneActionMine;
+                    mine.body.width = zoneActionMine;
+                    mine.body.setOffset(-((zoneActionMine/2)-(48/2)),-((zoneActionMine/2)-(48/2)));
+                } 
+            }
+        }
 
         const detonation = Phaser.Input.Keyboard.JustDown(cursors2.D)
-        const poseMine = Phaser.Input.Keyboard.JustDown(cursors2.E)
+        
         const useBreche = Phaser.Input.Keyboard.JustDown(cursors2.Q)
 
        /* if (poseBombe) {
@@ -566,14 +752,16 @@ class BatimentBreche extends Phaser.Scene{
         ////// ITEM BRECHE ///////////////////////
 
         
-        this.physics.add.overlap(itemBreche, player, recupBreche,null, this);
+        this.physics.add.collider(this.itemBreche ,player, recupBreche, null,this);
 
-        function recupBreche(itemBreche,player){
+        function recupBreche(player,itemBreche){
             itemBreche.destroy();
             brecheRecup = true;
             
         }
 
+        ////// ITEM COFFRE ///////////////////////
+        
         this.physics.add.collider(this.coffres ,player, ouvreCoffre, null,this);
         function ouvreCoffre (player, coffre){
             coffre.destroy();
@@ -589,6 +777,8 @@ class BatimentBreche extends Phaser.Scene{
                 lootPv = this.physics.add.sprite(coffreOpen.x,coffreOpen.y, 'lootPv');
             }
         }
+
+        ////// ITEM CLEF ///////////////////////
 
         this.physics.add.collider(this.clef ,player, recupClef, null,this);
         function recupClef (player, clef){

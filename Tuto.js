@@ -1,6 +1,7 @@
 class Tuto extends Phaser.Scene{
     constructor(){
         super("Tuto");
+        this.pad = null;
     }
     init(data){
     }
@@ -20,6 +21,9 @@ class Tuto extends Phaser.Scene{
         this.load.image('bareDeVie_1Pv','assets/barre_de_vie/barre_vie_1pv.png');
         this.load.image('bareDeVie_0Pv','assets/barre_de_vie/barre_vie_0pv.png');
         this.load.image('bareDeVie_breche','assets/barre_de_vie/barre_vie_breche.png');
+
+        this.load.image('coffre_fermer','assets/loot/coffre_fermer.png');
+        this.load.image('coffre_ouvert','assets/loot/coffre_ouvert.png');
 
         this.load.image('inventaire','assets/inventaire/nbMine_nbSubstance.png');
         this.load.image('inventaire_breche','assets/inventaire/nbMine_nbSubstance_breche.png');
@@ -62,16 +66,17 @@ class Tuto extends Phaser.Scene{
 
         mur.setCollisionByExclusion(-1, true);
         zone.setCollisionByExclusion(-1, true)
-        if (ville){
-            player = this.physics.add.sprite(256,940, 'boomer_anime').setDepth(1);
+
+        if (villeTuto){
+            player = this.physics.add.sprite(230, 900, 'boomer_anime').setDepth(1);
         }
         else {
-            player = this.physics.add.sprite(100, 100, 'boomer_anime').setDepth(1);
+            player = this.physics.add.sprite( 100, 145, 'boomer_anime').setDepth(1);
         }
         
 
         this.physics.add.collider(player, mur);
-        this.physics.add.overlap(player, zone, changementZone, null, this);
+        this.physics.add.collider(player, zone, changementZone, null, this);
 ////// ANIME FACE ///////////////////////      
         this.anims.create({
             key: 'face',
@@ -121,7 +126,9 @@ class Tuto extends Phaser.Scene{
             frameRate: 10,
         });
 
-////// ENNEMIS ///////////////////////
+    /////////////////////////////   
+    // ENEMIS ///////////////////
+    /////////////////////////////
 
         const enemieObjects = map.getObjectLayer('enemie').objects;
         this.enemies = this.physics.add.group({
@@ -138,13 +145,68 @@ class Tuto extends Phaser.Scene{
         
         this.physics.add.collider(this.enemies, mur);
         this.physics.add.collider(this.enemies, zone);
-        
+       
+    /////////////////////////////   
+    // COFFRE ///////////////////
+    /////////////////////////////
 
+    const coffreObjects = map.getObjectLayer('coffre').objects;
+    this.coffres = this.physics.add.group({
+        allowGravity: false
+    }); 
+
+    for (const coffre of coffreObjects) {
+
+        this.coffres.create(coffre.x, coffre.y, 'coffre_fermer')
+            .setOrigin(0.5,0.5)
+            .setDepth(0.5)
+            .setScale(1)
+    }
+    /////////////////////////////   
+    // CLEF ///////////////////
+    /////////////////////////////
+
+    const clefObjects = map.getObjectLayer('clef').objects;
+    this.clef = this.physics.add.group({
+        allowGravity: false
+    }); 
+
+    for (const clef of clefObjects) {
+
+        this.clef.create(clef.x, clef.y, 'coffre_fermer')
+            .setOrigin(0.5,0.5)
+            .setDepth(0.5)
+            .setScale(1)
+    }
+    //manette
+    if (this.input.gamepad.total === 0){
+        this.input.gamepad.once('connected', function (pad, button, index) {
+            paddle = pad;
+            padConnected = true;
+        }); 
+    }
+    else {
+        paddle = this.input.gamepad.pad1;
+    }
         cursors = this.input.keyboard.createCursorKeys();
         cursors2 = this.input.keyboard.addKeys('Z,Q,S,D,SPACE,A,E,SHIFT'); 
 
- ////// ITEM BRECHE ///////////////////////
-        itemBreche = this.physics.add.sprite(400, 100, 'itembreche')
+    /////////////////////////////   
+    // ITEM BRECHE ///////////////
+    /////////////////////////////
+
+    const brecheObjects = map.getObjectLayer('breche').objects;
+    this.itemBreche = this.physics.add.group({
+        allowGravity: false
+    }); 
+
+    for (const itemBreche of brecheObjects) {
+
+        this.itemBreche.create(itemBreche.x, itemBreche.y, 'itembreche')
+            .setOrigin(0.5,0.5)
+            .setDepth(0.5)
+            .setScale(1)
+    }
 
       /////////////////////////////   
      // CAMERA ///////////////////
@@ -154,10 +216,15 @@ class Tuto extends Phaser.Scene{
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         //this.cameras.main.zoom = 2;
 
+      /////////////////////////////   
+     // CHARGEMENT ///////////////
+    /////////////////////////////
+
         function changementZone(player, zone){
-            if (player.y >= 960 && player.x >= 192 && player.x <= 320){
+            if (player.y >= 920 && player.x >= 184 && player.x <= 264){
                 this.scene.start("Ville");
                 console.log("changement");
+                tutoVille = true;
                 /*cursors.up.reset();
                 cursors.down.reset();
                 cursors.right.reset();
@@ -179,31 +246,36 @@ class Tuto extends Phaser.Scene{
        
     }
     update(){
+        afficheMine.setText('Nb Mine : ' + player.y);
+        afficheSB.setText('Nb Mine : ' + player.x);
+        const poseMine = Phaser.Input.Keyboard.JustDown(cursors2.E)
+        //const poseMinePad = Phaser.Input.paddle.justPressed(paddle.B)
+
         if(pv === 3)
         {
-            vie3 = this.add.image(400,100,'bareDeVie_3Pv') 
+            barreVie = this.add.image(400,100,'bareDeVie_3Pv') 
                 .setDepth(1)
                 .setScrollFactor(0);
         }
         
         if (pv === 2){
 
-            vie3.destroy();
+            //vie3.destroy();
             
-            vie2 = this.add.image(400,100,'bareDeVie_2Pv') 
+            barreVie = this.add.image(400,100,'bareDeVie_2Pv') 
                 .setDepth(1)
                 .setScrollFactor(0);
         }
         
         if (pv === 1){
             
-            vie1 = this.add.image(400,100,'bareDeVie_1Pv') 
+            barreVie = this.add.image(400,100,'bareDeVie_1Pv') 
                 .setDepth(1)
                 .setScrollFactor(0);
         }
         if (pv===0){
             gameOver = true;
-            vie0 = this.add.image(400,100,'bareDeVie_0Pv') 
+            barreVie = this.add.image(400,100,'bareDeVie_0Pv') 
                 .setDepth(1)
                 .setScrollFactor(0);
         }
@@ -212,7 +284,21 @@ class Tuto extends Phaser.Scene{
             .setDepth(1)
             .setScrollFactor(0); 
         }
-        
+        if (recupclef){
+            inventaire = this.add.image(1000,100,'inventaire_clef') 
+            .setDepth(1)
+            .setScrollFactor(0); 
+        }
+        if (recupclef && brecheRecup){
+            inventaire = this.add.image(1000,100,'inventaire_breche_clef') 
+            .setDepth(1)
+            .setScrollFactor(0);
+        }
+
+      /////////////////////////////   
+     // CONTROLE CLAVIER /////////
+    /////////////////////////////
+
         if (cursors.right.isDown){
             if (gameOver == false){
                 gauche = false;
@@ -308,10 +394,142 @@ class Tuto extends Phaser.Scene{
                 player.setVelocityX((vitesse*0.7));
             }
         }
+      /////////////////////////////   
+     // CONTROLE PAD /////////////
+    /////////////////////////////
+    
+        this.input.gamepad.once('connected', function (pad) {
+            paddle = pad;
+            padConnected = true;
+        });
+        if (padConnected){
 
+            if (cursors.right.isDown || paddle.right ){
+                if (gameOver == false){
+                    gauche = false;
+                    droite = true;
+                    dos = false;
+                    face = false;
+                    player.setVelocityX(vitesse);
+                    player.anims.play('droite', true);
+                }
+            }
+            else if (cursors.left.isDown || paddle.left){
+                if (gameOver == false){
+                    gauche = true;
+                    droite = false;
+                    dos = false;
+                    face = false;
+                    player.setVelocityX(-vitesse);
+                    player.anims.play('gauche', true);
+                }
+                
+                
+            }
+            else if (cursors.right.isUp && cursors.left.isUp){
+                player.setVelocityX(0);
+                if (gameOver == false){
+                    if (gauche == true){
+                        player.anims.play('gauche_neutre', true);
+                    }
+                    else if (droite == true){
+                        player.anims.play('droite_neutre', true);
+                    }
+                }
+                
+            }
+            if (cursors.up.isDown || paddle.up){
+                if (gameOver == false){
+                    gauche = false;
+                    droite = false;
+                    dos = true;
+                    face = false;
+                    player.setVelocityY(-vitesse);
+                    player.anims.play('dos', true);
+                } 
+            }
+            else if (cursors.down.isDown || paddle.down){
+                if (gameOver == false){
+                    gauche = false;
+                    droite = false;
+                    dos = false;
+                    face = true;
+    
+                    player.setVelocityY(vitesse);
+                    player.anims.play('face', true);
+                }
+                
+                
+            }
+            else if (cursors.up.isUp && cursors.down.isUp){
+                player.setVelocityY(0);
+                if (gameOver == false){
+                    if (dos == true){
+                        player.anims.play('dos_neutre', true);
+                    }
+                    else if (face == true){
+                        player.anims.play('face_neutre', true);
+                    }
+                }
+                
+            }
+    
+            if (cursors.up.isDown && cursors.left.isDown || paddle.up && paddle.left){
+                if (gameOver == false){
+                    player.setVelocityY(-(vitesse*0.7));
+                    player.setVelocityX(-(vitesse*0.7));
+                }
+            }
+            else if (cursors.up.isDown && cursors.right.isDown || paddle.up && paddle.right){
+                if (gameOver == false){
+                    player.setVelocityY(-(vitesse*0.7));
+                    player.setVelocityX(vitesse*0.7);
+                }
+                
+            }
+            else if (cursors.down.isDown && cursors.left.isDown || paddle.down && paddle.left){
+                if (gameOver == false){
+                    player.setVelocityY(vitesse*0.7);
+                    player.setVelocityX(-(vitesse*0.7));
+                } 
+            }
+            else if ( cursors.down.isDown && cursors.right.isDown || paddle.down && paddle.right){
+                if (gameOver == false){
+                    player.setVelocityY(vitesse*0.7);
+                    player.setVelocityX((vitesse*0.7));
+                }
+            }
+
+            if (cursors2.Q.isDown && brecheRecup && gameOver == false || paddle.A && brecheRecup && gameOver == false){
+
+                barreVie = this.add.image(400,100,'bareDeVie_breche')
+                    .setDepth(1)
+                    .setScrollFactor(0); 
+    
+                player.setVelocity(0);
+                breche = true;
+                player.setTint(6754E1);
+    
+            }
+            else if (invincible == false){
+                breche = false;
+                player.setTint(0xffffff);
+            }
+
+            if (poseMine && gameOver == false || paddle.B.isDown && gameOver == false) {
+                if ( nbMine > 0){
+                    nbMine -= 1;
+                    afficheMine.setText('Nb Mine : ' + nbMine);
+                    mine = this.physics.add.sprite(player.x,player.y, 'mine');
+                    mine.body.height = zoneActionMine;
+                    mine.body.width = zoneActionMine;
+                    mine.body.setOffset(-((zoneActionMine/2)-(48/2)),-((zoneActionMine/2)-(48/2)));
+                } 
+            }
+        }
 
         const detonation = Phaser.Input.Keyboard.JustDown(cursors2.D)
-        const poseMine = Phaser.Input.Keyboard.JustDown(cursors2.E)
+        
         const useBreche = Phaser.Input.Keyboard.JustDown(cursors2.Q)
 
        /* if (poseBombe) {
@@ -349,7 +567,7 @@ class Tuto extends Phaser.Scene{
         }*/
         if (cursors2.Q.isDown && brecheRecup && gameOver == false){
 
-            vieBreche = this.add.image(400,100,'bareDeVie_breche')
+            barreVie = this.add.image(400,100,'bareDeVie_breche')
                 .setDepth(1)
                 .setScrollFactor(0); 
 
@@ -523,12 +741,38 @@ class Tuto extends Phaser.Scene{
         ////// ITEM BRECHE ///////////////////////
 
         
-        this.physics.add.overlap(itemBreche, player, recupBreche,null, this);
+        this.physics.add.collider(this.itemBreche ,player, recupBreche, null,this);
 
-        function recupBreche(itemBreche,player){
+        function recupBreche(player,itemBreche){
             itemBreche.destroy();
             brecheRecup = true;
             
+        }
+
+        ////// ITEM COFFRE ///////////////////////
+        
+        this.physics.add.collider(this.coffres ,player, ouvreCoffre, null,this);
+        function ouvreCoffre (player, coffre){
+            coffre.destroy();
+            coffreOpen = this.physics.add.sprite(coffre.x,coffre.y, 'coffre_ouvert');
+            aleatoire = Math.floor(Math.random() * Math.floor(3));
+            if (aleatoire == 0){
+                lootSubstance = this.physics.add.sprite(coffreOpen.x,coffreOpen.y, 'lootSubstance');
+            }
+            else if (aleatoire == 1){
+                lootMine = this.physics.add.sprite(coffreOpen.x,coffreOpen.y, 'lootMine');
+            }
+            else if (aleatoire == 2){
+                lootPv = this.physics.add.sprite(coffreOpen.x,coffreOpen.y, 'lootPv');
+            }
+        }
+
+        ////// ITEM CLEF ///////////////////////
+
+        this.physics.add.collider(this.clef ,player, recupClef, null,this);
+        function recupClef (player, clef){
+            clef.destroy();
+            recupclef = true;
         }
                 
     }

@@ -1,6 +1,6 @@
-class Ville extends Phaser.Scene{
+class BatimentFin extends Phaser.Scene{
     constructor(){
-        super("Ville");
+        super("BatimentFin");
         this.pad = null;
     }
     init(data){
@@ -31,7 +31,7 @@ class Ville extends Phaser.Scene{
         this.load.image('inventaire_breche_clef','assets/inventaire/nbMine_nbSubstance_breche_clef.png');
 
         this.load.image('tiles','assets/tiles/carte_teste.png');
-        this.load.tilemapTiledJSON('map_ville','assets/tiles/ville.json'); 
+        this.load.tilemapTiledJSON('map_fin','assets/tiles/batiment_fin.json'); 
     }
     create(){
         inventaire = this.add.image(1000,100,'inventaire') 
@@ -58,7 +58,7 @@ class Ville extends Phaser.Scene{
         affichePV = this.add.text(10, 30, 'pv : ' + pv, { fontSize: '32px', fill: '#48E14E' }).setScrollFactor(0).setDepth(1);
         afficheSB = this.add.text(10, 50, 'pv : ' + nbSubstance, { fontSize: '32px', fill: '#48E14E' }).setScrollFactor(0).setDepth(1);
 
-        const map = this.make.tilemap({key: 'map_ville'});
+        const map = this.make.tilemap({key: 'map_fin'});
         const tileset = map.addTilesetImage('carte_teste', 'tiles');
         const terrain = map.createLayer('sol', tileset, 0, 0);
         const mur = map.createLayer('mur', tileset, 0, 0);
@@ -66,55 +66,13 @@ class Ville extends Phaser.Scene{
 
         mur.setCollisionByExclusion(-1, true);
         zone.setCollisionByExclusion(-1, true)
-
-        if (tutoVille){
-            brecheVille = false;
-            brecheCoffre = false;
-            clefVille = false;
-            finVille = false;
-            finSorti = false;
-            player = this.physics.add.sprite(224, 240, 'boomer_anime').setDepth(1);
+        if (villeFin){
+            player = this.physics.add.sprite(320, 1048, 'boomer_anime').setDepth(1);
         }
-        else if (brecheVille){
-            tutoVille = false;
-            brecheCoffre = false;
-            clefVille = false;
-            finVille = false;
-            finSorti = false;
-            player = this.physics.add.sprite( 2064, 312, 'boomer_anime').setDepth(1);
+        else if(villeFin_2){
+            player = this.physics.add.sprite(2048, 1064, 'boomer_anime').setDepth(1);
         }
-        else if (brecheCoffre){
-            tutoVille = false;
-            brecheVille = false;
-            clefVille = false;
-            finVille = false;
-            finSorti = false;
-            player = this.physics.add.sprite( 3670, 312, 'boomer_anime').setDepth(1);
-        }
-        else if (clefVille){
-            tutoVille = false;
-            brecheVille = false;
-            brecheCoffre = false;
-            finVille = false;
-            finSorti = false;
-            player = this.physics.add.sprite( 984, 1100, 'boomer_anime').setDepth(1);
-        }
-        else if (finVille){
-            tutoVille = false;
-            brecheVille = false;
-            brecheCoffre = false;
-            clefVille = false;
-            finSorti = false;
-            player = this.physics.add.sprite( 1744, 1720, 'boomer_anime').setDepth(1);
-        }
-        else if (finSorti){
-            tutoVille = false;
-            brecheVille = false;
-            brecheCoffre = false;
-            clefVille = false;
-            finVille = false;
-            player = this.physics.add.sprite( 3472, 1720, 'boomer_anime').setDepth(1);
-        }        
+        
 
         this.physics.add.collider(player, mur);
         this.physics.add.collider(player, zone, changementZone, null, this);
@@ -262,61 +220,43 @@ class Ville extends Phaser.Scene{
     /////////////////////////////
 
         function changementZone(player, zone){
-            if (player.y >= 232 && player.x >= 183 && player.x <= 266){
-                this.scene.start("Tuto");
+            if (player.y >= 1048 && player.x >= 280 && player.x <= 360 && recupclef){
+                this.scene.start("Ville");
                 console.log("changement");
-                villeTuto = true;
+                brecheVille = false;
+                brecheCoffre = false;
+                villeTuto = false;
+                finVille = true;
+                finSorti = false;              
+                clefVille = false;
+                villeBreche = false;
+                villeBreche_2 = false;
+                tutoVille = false;
+                villeFin = false;
+                villeFin_2 = false;
                 /*cursors.up.reset();
                 cursors.down.reset();
                 cursors.right.reset();
                 cursors.left.reset();*/
             }
-            else if (player.y >= 312 && player.x >= 1992 && player.x <= 2136){
-                this.scene.start("BatimentBreche");
+            else if (player.y >= 1064 && player.x >= 2008 && player.x <= 2088){
+                this.scene.start("Ville");
                 console.log("changement");
-                villeBreche = true;
-                villeBreche_2 = false;
-                tutoVille = false;
-                villeClef = false;
-                villeFin = false;
-                villeFin_2 = false;
-            }
-            else if (player.y >= 312 && player.x >= 3656 && player.x <= 3704){
-                this.scene.start("BatimentBreche");
-                console.log("changement");
-                villeBreche = false;
-                villeBreche_2 = true;
-                tutoVille = false;
-                villeClef = false;
-                villeFin = false;
-                villeFin_2 = false;
-            }
-            else if (player.x >= 984 && player.y >= 1065 && player.y <= 1142){
-                this.scene.start("BatimentClef");
-                console.log("changement");
+                finVille = false;
+                finSorti = true;
+                brecheVille = false;
+                brecheCoffre = false;
+                villeTuto = false;              
+                clefVille = false;
                 villeBreche = false;
                 villeBreche_2 = false;
                 tutoVille = false;
                 villeFin = false;
                 villeFin_2 = false;
-            }
-            else if (player.y >= 1720 && player.x >= 1704 && player.x <= 1784 && recupclef){
-                this.scene.start("BatimentFin");
-                console.log("changement");
-                villeBreche = false;
-                villeBreche_2 = false;
-                tutoVille = false;
-                villeFin = true;
-                villeFin_2 = false;
-            }
-            else if (player.y >= 1720 && player.x >= 3432 && player.x <= 3512){
-                this.scene.start("BatimentFin");
-                console.log("changement");
-                villeBreche = false;
-                villeBreche_2 = false;
-                tutoVille = false;
-                villeFin = false;
-                villeFin_2 = true;
+                /*cursors.up.reset();
+                cursors.down.reset();
+                cursors.right.reset();
+                cursors.left.reset();*/
             }
         }
         

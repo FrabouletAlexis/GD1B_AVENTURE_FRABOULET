@@ -66,8 +66,8 @@ class BatimentClef extends Phaser.Scene{
 
         mur.setCollisionByExclusion(-1, true);
         zone.setCollisionByExclusion(-1, true)
-
-        player = this.physics.add.sprite(500, 100, 'boomer_anime').setDepth(1);
+        
+        player = this.physics.add.sprite(1224, 510, 'boomer_anime').setDepth(1);
 
         this.physics.add.collider(player, mur);
         this.physics.add.collider(player, zone, changementZone, null, this);
@@ -185,8 +185,22 @@ class BatimentClef extends Phaser.Scene{
         cursors = this.input.keyboard.createCursorKeys();
         cursors2 = this.input.keyboard.addKeys('Z,Q,S,D,SPACE,A,E,SHIFT'); 
 
- ////// ITEM BRECHE ///////////////////////
-        itemBreche = this.physics.add.sprite(400, 100, 'itembreche')
+    /////////////////////////////   
+    // ITEM BRECHE ///////////////
+    /////////////////////////////
+
+    const brecheObjects = map.getObjectLayer('breche').objects;
+    this.itemBreche = this.physics.add.group({
+        allowGravity: false
+    }); 
+
+    for (const itemBreche of brecheObjects) {
+
+        this.itemBreche.create(itemBreche.x, itemBreche.y, 'itembreche')
+            .setOrigin(0.5,0.5)
+            .setDepth(0.5)
+            .setScale(1)
+    }
 
       /////////////////////////////   
      // CAMERA ///////////////////
@@ -196,10 +210,25 @@ class BatimentClef extends Phaser.Scene{
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         //this.cameras.main.zoom = 2;
 
+      /////////////////////////////   
+     // CHARGEMENT ///////////////
+    /////////////////////////////
+
         function changementZone(player, zone){
-            if (player.y >= 680 && player.x >= 400 && player.x <= 560 && recupclef){
-                this.scene.start("BatimentClef");
+            if (player.x >= 1224 && player.y >= 468 && player.y <= 550){
+                this.scene.start("Ville");
                 console.log("changement");
+                brecheVille = false;
+                brecheCoffre = false;
+                villeTuto = false;
+                finVille = false;
+                finSorti = false;
+                clefVille = true;
+                villeBreche = false;
+                villeBreche_2 = false;
+                tutoVille = false;
+                villeFin = false;
+                villeFin_2 = false;
                 /*cursors.up.reset();
                 cursors.down.reset();
                 cursors.right.reset();
@@ -221,6 +250,8 @@ class BatimentClef extends Phaser.Scene{
        
     }
     update(){
+        afficheMine.setText('Nb Mine : ' + player.y);
+        afficheSB.setText('Nb Mine : ' + player.x);
         const poseMine = Phaser.Input.Keyboard.JustDown(cursors2.E)
         //const poseMinePad = Phaser.Input.paddle.justPressed(paddle.B)
 
@@ -714,14 +745,16 @@ class BatimentClef extends Phaser.Scene{
         ////// ITEM BRECHE ///////////////////////
 
         
-        this.physics.add.overlap(itemBreche, player, recupBreche,null, this);
+        this.physics.add.collider(this.itemBreche ,player, recupBreche, null,this);
 
-        function recupBreche(itemBreche,player){
+        function recupBreche(player,itemBreche){
             itemBreche.destroy();
             brecheRecup = true;
             
         }
 
+        ////// ITEM COFFRE ///////////////////////
+        
         this.physics.add.collider(this.coffres ,player, ouvreCoffre, null,this);
         function ouvreCoffre (player, coffre){
             coffre.destroy();
@@ -737,6 +770,8 @@ class BatimentClef extends Phaser.Scene{
                 lootPv = this.physics.add.sprite(coffreOpen.x,coffreOpen.y, 'lootPv');
             }
         }
+
+        ////// ITEM CLEF ///////////////////////
 
         this.physics.add.collider(this.clef ,player, recupClef, null,this);
         function recupClef (player, clef){
