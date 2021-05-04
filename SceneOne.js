@@ -63,7 +63,7 @@ var mine;
 var nbMine = 5;
 var mineMax = 5;
 var afficheMine;
-var zoneActionMine = 60;
+var zoneActionMine = 100;
 
 class SceneOne extends Phaser.Scene{
     constructor(){

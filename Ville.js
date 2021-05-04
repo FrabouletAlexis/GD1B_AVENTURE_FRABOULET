@@ -262,7 +262,7 @@ class Ville extends Phaser.Scene{
     /////////////////////////////
 
         function changementZone(player, zone){
-            if (player.y >= 232 && player.x >= 183 && player.x <= 266){
+            if (player.y >= 230 && player.x >= 200 && player.x <= 248){
                 this.scene.start("Tuto");
                 console.log("changement");
                 villeTuto = true;

@@ -53,10 +53,18 @@ class Tuto extends Phaser.Scene{
         zone.setCollisionByExclusion(-1, true)
 
         if (villeTuto){
-            player = this.physics.add.sprite(230, 900, 'boomer_anime').setDepth(1);
+            player = this.physics.add.sprite(260, 1230, 'boomer_anime').setDepth(1);
+           
+            player.body.height = 96;
+            player.body.width = 40;
+            player.body.setOffset(((80/2)-(40/2)),0);
         }
         else {
             player = this.physics.add.sprite( 100, 145, 'boomer_anime').setDepth(1);
+
+            player.body.height = 96;
+            player.body.width = 40;
+            player.body.setOffset(((80/2)-(40/2)),0);
         }
         
 
@@ -75,6 +83,11 @@ class Tuto extends Phaser.Scene{
             frames: [ { key: 'boomer_anime', frame: 45 } ],
             frameRate: 10,
         });
+        this.anims.create({
+            key: 'coter_mort',
+            frames: [ { key: 'boomer_anime', frame: 63 } ],
+            frameRate: 10,
+        });
 
 ////// ANIME FACE ///////////////////////      
         this.anims.create({
@@ -86,6 +99,11 @@ class Tuto extends Phaser.Scene{
         this.anims.create({
             key: 'face_neutre',
             frames: [ { key: 'boomer_anime', frame: 46 } ],
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'face_mort',
+            frames: [ { key: 'boomer_anime', frame: 64 } ],
             frameRate: 10,
         });
 
@@ -100,6 +118,11 @@ class Tuto extends Phaser.Scene{
         this.anims.create({
             key: 'dos_neutre',
             frames: [ { key: 'boomer_anime', frame: 47 } ],
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'dos_mort',
+            frames: [ { key: 'boomer_anime', frame: 65 } ],
             frameRate: 10,
         });
 
@@ -223,7 +246,7 @@ class Tuto extends Phaser.Scene{
     /////////////////////////////
 
         function changementZone(player, zone){
-            if (player.y >= 920 && player.x >= 184 && player.x <= 264){
+            if (player.y >= 920 && player.x >= 184 && player.x <= 344){
                 this.scene.start("Ville");
                 console.log("changement");
                 tutoVille = true;
@@ -311,6 +334,10 @@ class Tuto extends Phaser.Scene{
                 player.setVelocityX(vitesse);
                 player.anims.play('coter', true);
                 player.setFlipX(true);
+
+               /* player.body.height = 80;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),((96/2)-(80/2)));*/
             }
         }
         else if (cursors.left.isDown && breche == false){
@@ -322,6 +349,10 @@ class Tuto extends Phaser.Scene{
                 player.setVelocityX(-vitesse);
                 player.anims.play('coter', true);
                 player.setFlipX(false);
+
+                /*player.body.height = 80;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),((96/2)-(80/2)));*/
             }
             
             
@@ -348,6 +379,11 @@ class Tuto extends Phaser.Scene{
                 face = false;
                 player.setVelocityY(-vitesse);
                 player.anims.play('dos', true);
+
+               /* player.body.height = 80;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),((96/2)-(80/2)));
+                //player.body.setOffset(-(80/2),-(40/2));*/
             } 
         }
         else if (cursors.down.isDown && breche == false){
@@ -356,6 +392,10 @@ class Tuto extends Phaser.Scene{
                 droite = false;
                 dos = false;
                 face = true;
+
+                /*player.body.height = 80;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),((96/2)-(80/2)));*/
 
                 player.setVelocityY(vitesse);
                 player.anims.play('face', true);
@@ -551,11 +591,32 @@ class Tuto extends Phaser.Scene{
     /////////////////////////////
         
         if (gameOver){
+            if (face == true){
+                player.anims.play('face_mort', true);
+                player.setTint(0xff0000);
+            }
+            else if (gauche == true){
+                player.anims.play('coter_mort', true);
+                player.setFlipX(false);
+                player.setTint(0xff0000);
+            }
+            else if (droite == true){
+                player.anims.play('coter_mort', true);
+                player.setFlipX(true);
+                player.setTint(0xff0000);
+            }
+            else if (dos == true){
+                player.anims.play('dos_mort', true);
+                player.setTint(0xff0000);
+            }
             if (cursors2.R.isDown){
                 this.scene.restart();
+                gameOver = false;
             }
         }
-
+      /////////////////////////////   
+     // ACTIVE BRECHE   //////////
+    /////////////////////////////
         if (cursors2.Q.isDown && brecheRecup && gameOver == false){
             
             player.anims.play('breche', true);
@@ -574,7 +635,9 @@ class Tuto extends Phaser.Scene{
             player.setTint(0xffffff);
         }
         
-
+      /////////////////////////////   
+     //POSE MINE  ////////////////
+    /////////////////////////////
         if (poseMine && gameOver == false) {
             if ( nbMine > 0){
                 nbMine -= 1;

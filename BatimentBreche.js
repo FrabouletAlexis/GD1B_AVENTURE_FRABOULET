@@ -6,11 +6,12 @@ class BatimentBreche extends Phaser.Scene{
     init(data){
     }
     preload(){
-        this.load.spritesheet('boomer_anime', 'assets/spritesheet/boomer.png', { frameWidth: 48, frameHeight: 48 });
+        this.load.spritesheet('boomer_anime', 'assets/spritesheet/boomer2.png', { frameWidth: 80, frameHeight: 96 });
+        //this.load.spritesheet('boomer_anime', 'assets/spritesheet/boomer.png', { frameWidth: 48, frameHeight: 48 });
         this.load.spritesheet('arbre', 'assets/spritesheet/ennemis.png', { frameWidth: 48, frameHeight: 48 });
+        this.load.spritesheet('mine', 'assets/spritesheet/mine.png', { frameWidth: 48, frameHeight: 48 });
 
-        this.load.image('bombe','assets/spritesheet/bombe.png');
-        this.load.image('mine','assets/spritesheet/mine.png');
+        //this.load.image('mine','assets/spritesheet/mine.png');
         this.load.image('lootMine','assets/spritesheet/lootMine.png');
         this.load.image('lootSubstance','assets/spritesheet/substance.png');
         this.load.image('lootPv','assets/spritesheet/pv.png');
@@ -68,65 +69,108 @@ class BatimentBreche extends Phaser.Scene{
         zone.setCollisionByExclusion(-1, true)
 
         if (villeBreche){
-            player = this.physics.add.sprite( 480,1060, 'boomer_anime').setDepth(1);
+            player = this.physics.add.sprite( 500,1200, 'boomer_anime').setDepth(1);
+                player.body.height = 96;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),0);
         }
         else if (villeBreche_2){
-            player = this.physics.add.sprite(2095, 1060, 'boomer_anime').setDepth(1);
+            player = this.physics.add.sprite(2190, 1200, 'boomer_anime').setDepth(1);
+                player.body.height = 96;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),0);
+        }
+        else {
+            player = this.physics.add.sprite(500,1200, 'boomer_anime').setDepth(1);
+                player.body.height = 96;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),0);
         }
         //player = this.physics.add.sprite(2095, 1060, 'boomer_anime').setDepth(1);
         
 
         this.physics.add.collider(player, mur);
         this.physics.add.collider(player, zone, changementZone, null, this);
+
+////// ANIME COTER ///////////////////////
+        this.anims.create({
+            key: 'coter',
+            frames: this.anims.generateFrameNumbers('boomer_anime', { start: 0, end: 14 }),
+            frameRate: 30,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'coter_neutre',
+            frames: [ { key: 'boomer_anime', frame: 45 } ],
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'coter_mort',
+            frames: [ { key: 'boomer_anime', frame: 63 } ],
+            frameRate: 10,
+        });
+
 ////// ANIME FACE ///////////////////////      
         this.anims.create({
             key: 'face',
-            frames: this.anims.generateFrameNumbers('boomer_anime', { start: 0, end: 2 }),
-            frameRate: 10,
+            frames: this.anims.generateFrameNumbers('boomer_anime', { start: 15, end: 29 }),
+            frameRate: 30,
             repeat: -1
         });
         this.anims.create({
             key: 'face_neutre',
-            frames: [ { key: 'boomer_anime', frame: 1 } ],
+            frames: [ { key: 'boomer_anime', frame: 46 } ],
             frameRate: 10,
-        });
-////// ANIME GAUCHE ///////////////////////
-        this.anims.create({
-            key: 'gauche',
-            frames: this.anims.generateFrameNumbers('boomer_anime', { start: 3, end: 5 }),
-            frameRate: 10,
-            repeat: -1
         });
         this.anims.create({
-            key: 'gauche_neutre',
-            frames: [ { key: 'boomer_anime', frame: 4 } ],
+            key: 'face_mort',
+            frames: [ { key: 'boomer_anime', frame: 64 } ],
             frameRate: 10,
         });
-////// ANIME DROITE /////////////////////// 
-        this.anims.create({
-            key: 'droite',
-            frames: this.anims.generateFrameNumbers('boomer_anime', { start: 6, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'droite_neutre',
-            frames: [ { key: 'boomer_anime', frame: 7 } ],
-            frameRate: 10,
-        });
+
+
 ////// ANIME DOS ///////////////////////
         this.anims.create({
             key: 'dos',
-            frames: this.anims.generateFrameNumbers('boomer_anime', { start: 9, end: 11 }),
-            frameRate: 10,
+            frames: this.anims.generateFrameNumbers('boomer_anime', { start: 30, end: 44 }),
+            frameRate: 30,
             repeat: -1
         });
         this.anims.create({
             key: 'dos_neutre',
-            frames: [ { key: 'boomer_anime', frame: 10 } ],
+            frames: [ { key: 'boomer_anime', frame: 47 } ],
+            frameRate: 10,
+        });
+        this.anims.create({
+            key: 'dos_mort',
+            frames: [ { key: 'boomer_anime', frame: 65 } ],
             frameRate: 10,
         });
 
+////// ANIME BRECHE ///////////////////////      
+        this.anims.create({
+            key: 'breche',
+            frames: this.anims.generateFrameNumbers('boomer_anime', { start: 48, end: 62 }),
+            frameRate: 30,
+            repeat: -1
+        });
+
+/////////////////////////////   
+// ANIME MINE ///////////////
+////////////////////////////    
+        this.anims.create({
+            key: 'mine_pose',
+            frames: this.anims.generateFrameNumbers('mine', { start: 0, end: 11 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'mine_explose',
+            frames: this.anims.generateFrameNumbers('mine', { start: 12, end: 23 }),
+            frameRate: 10,
+            //repeat: -1
+        });
     /////////////////////////////   
     // ENEMIS ///////////////////
     /////////////////////////////
@@ -190,24 +234,27 @@ class BatimentBreche extends Phaser.Scene{
         paddle = this.input.gamepad.pad1;
     }
         cursors = this.input.keyboard.createCursorKeys();
-        cursors2 = this.input.keyboard.addKeys('Z,Q,S,D,SPACE,A,E,SHIFT'); 
+        cursors2 = this.input.keyboard.addKeys('Z,Q,S,D,SPACE,A,E,R,SHIFT'); 
 
     /////////////////////////////   
     // ITEM BRECHE ///////////////
     /////////////////////////////
 
-    const brecheObjects = map.getObjectLayer('breche').objects;
-    this.itemBreche = this.physics.add.group({
-        allowGravity: false
-    }); 
+    if (brecheRecup == false){
+        const brecheObjects = map.getObjectLayer('breche').objects;
+        this.itemBreche = this.physics.add.group({
+            allowGravity: false
+        }); 
 
-    for (const itemBreche of brecheObjects) {
+        for (const itemBreche of brecheObjects) {
 
-        this.itemBreche.create(itemBreche.x, itemBreche.y, 'itembreche')
-            .setOrigin(0.5,0.5)
-            .setDepth(0.5)
-            .setScale(1)
+            this.itemBreche.create(itemBreche.x, itemBreche.y, 'itembreche')
+                .setOrigin(0.5,0.5)
+                .setDepth(0.5)
+                .setScale(1)
+        }
     }
+    
 
       /////////////////////////////   
      // CAMERA ///////////////////
@@ -222,7 +269,7 @@ class BatimentBreche extends Phaser.Scene{
     /////////////////////////////
 
         function changementZone(player, zone){
-            if (player.y >= 1064 && player.x >= 410 && player.x <= 550){
+            if (player.y >= 1200 && player.x >= 410 && player.x <= 550){
                 this.scene.start("Ville");
                 console.log("changement");
                 brecheVille = true;
@@ -233,7 +280,7 @@ class BatimentBreche extends Phaser.Scene{
                 cursors.right.reset();
                 cursors.left.reset();*/
             }
-            else if(player.y >= 1064 && player.x >= 2070 && player.x <= 2120){
+            else if(player.y >= 1200 && player.x >= 2114 && player.x <= 2267){
                 this.scene.start("Ville");
                 console.log("changement");
                 brecheVille = false;
@@ -256,8 +303,8 @@ class BatimentBreche extends Phaser.Scene{
        
     }
     update(){
-        afficheMine.setText('tutoVille ' + tutoVille);
-        //afficheMine.setText('Nb Mine : ' + player.y);
+
+        afficheMine.setText('Nb Mine : ' + player.y);
         afficheSB.setText('Nb Mine : ' + player.x);
         const poseMine = Phaser.Input.Keyboard.JustDown(cursors2.E)
         //const poseMinePad = Phaser.Input.paddle.justPressed(paddle.B)
@@ -310,41 +357,53 @@ class BatimentBreche extends Phaser.Scene{
      // CONTROLE CLAVIER /////////
     /////////////////////////////
 
-        if (cursors.right.isDown){
+        if (cursors.right.isDown && breche == false){
             if (gameOver == false){
                 gauche = false;
                 droite = true;
                 dos = false;
                 face = false;
                 player.setVelocityX(vitesse);
-                player.anims.play('droite', true);
+                player.anims.play('coter', true);
+                player.setFlipX(true);
+
+               /* player.body.height = 80;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),((96/2)-(80/2)));*/
             }
         }
-        else if (cursors.left.isDown){
+        else if (cursors.left.isDown && breche == false){
             if (gameOver == false){
                 gauche = true;
                 droite = false;
                 dos = false;
                 face = false;
                 player.setVelocityX(-vitesse);
-                player.anims.play('gauche', true);
+                player.anims.play('coter', true);
+                player.setFlipX(false);
+
+                /*player.body.height = 80;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),((96/2)-(80/2)));*/
             }
             
             
         }
-        else if (cursors.right.isUp && cursors.left.isUp){
+        else if (cursors.right.isUp && cursors.left.isUp && breche == false){
             player.setVelocityX(0);
             if (gameOver == false){
                 if (gauche == true){
-                    player.anims.play('gauche_neutre', true);
+                    player.anims.play('coter_neutre', true);
+                    player.setFlipX(false);
                 }
                 else if (droite == true){
-                    player.anims.play('droite_neutre', true);
+                    player.anims.play('coter_neutre', true);
+                    player.setFlipX(true);
                 }
             }
             
         }
-        if (cursors.up.isDown){
+        if (cursors.up.isDown && breche == false){
             if (gameOver == false){
                 gauche = false;
                 droite = false;
@@ -352,14 +411,23 @@ class BatimentBreche extends Phaser.Scene{
                 face = false;
                 player.setVelocityY(-vitesse);
                 player.anims.play('dos', true);
+
+               /* player.body.height = 80;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),((96/2)-(80/2)));
+                //player.body.setOffset(-(80/2),-(40/2));*/
             } 
         }
-        else if (cursors.down.isDown){
+        else if (cursors.down.isDown && breche == false){
             if (gameOver == false){
                 gauche = false;
                 droite = false;
                 dos = false;
                 face = true;
+
+                /*player.body.height = 80;
+                player.body.width = 40;
+                player.body.setOffset(((80/2)-(40/2)),((96/2)-(80/2)));*/
 
                 player.setVelocityY(vitesse);
                 player.anims.play('face', true);
@@ -367,7 +435,7 @@ class BatimentBreche extends Phaser.Scene{
             
             
         }
-        else if (cursors.up.isUp && cursors.down.isUp){
+        else if (cursors.up.isUp && cursors.down.isUp && breche == false){
             player.setVelocityY(0);
             if (gameOver == false){
                 if (dos == true){
@@ -380,31 +448,38 @@ class BatimentBreche extends Phaser.Scene{
             
         }
 
-        if (cursors.up.isDown && cursors.left.isDown){
+        if (cursors.up.isDown && cursors.left.isDown && breche == false){
             if (gameOver == false){
                 player.setVelocityY(-(vitesse*0.7));
                 player.setVelocityX(-(vitesse*0.7));
+                player.anims.play('dos', true);
+                player.setFlipX(false);
             }
         }
-        else if (cursors.up.isDown && cursors.right.isDown){
+        else if (cursors.up.isDown && cursors.right.isDown && breche == false){
             if (gameOver == false){
                 player.setVelocityY(-(vitesse*0.7));
                 player.setVelocityX(vitesse*0.7);
+                player.anims.play('dos', true);
+                player.setFlipX(true);
             }
             
         }
-        else if (cursors.down.isDown && cursors.left.isDown){
+        else if (cursors.down.isDown && cursors.left.isDown && breche == false){
             if (gameOver == false){
                 player.setVelocityY(vitesse*0.7);
                 player.setVelocityX(-(vitesse*0.7));
+                player.anims.play('face', true);
             } 
         }
-        else if ( cursors.down.isDown && cursors.right.isDown){
+        else if ( cursors.down.isDown && cursors.right.isDown && breche == false){
             if (gameOver == false){
                 player.setVelocityY(vitesse*0.7);
                 player.setVelocityX((vitesse*0.7));
+                player.anims.play('face', true);
             }
         }
+
       /////////////////////////////   
      // CONTROLE PAD /////////////
     /////////////////////////////
@@ -519,7 +594,8 @@ class BatimentBreche extends Phaser.Scene{
     
                 player.setVelocity(0);
                 breche = true;
-                player.setTint(6754E1);
+                player.anims.play('breche', true);
+                //player.setTint(6754E1);
     
             }
             else if (invincible == false){
@@ -542,49 +618,48 @@ class BatimentBreche extends Phaser.Scene{
         const detonation = Phaser.Input.Keyboard.JustDown(cursors2.D)
         
         const useBreche = Phaser.Input.Keyboard.JustDown(cursors2.Q)
-
-       /* if (poseBombe) {
-            if (bombePoser == false && nbBombe > 0){
-                bombePoser = true;
-                nbBombe -= 1;
-                afficheBombe.setText('Nb Bombe : ' + nbBombe);
-                bombe = this.physics.add.sprite(player.x,player.y, 'mine');
-                bombe.body.height = zoneActionBombe;
-                bombe.body.width = zoneActionBombe;
-                bombe.body.setOffset(-((zoneActionBombe/2)-(48/2)),-((zoneActionBombe/2)-(48/2)));
-            }         
-        }
-
-        if (detonation && bombePoser == true){
-            bombe.disableBody(true, true);
-            bombe.destroy();
-            degatBombe = true;
-            bombePoser = false;
-            
-        }*/
-        /*if (dash){
-            if (gauche == true){
-                player.setVelocityX(-vitesseDash);
+      /////////////////////////////   
+     // RESPAWN      /////////////
+    /////////////////////////////
+        
+        if (gameOver){
+            if (face == true){
+                player.anims.play('face_mort', true);
+                player.setTint(0xff0000);
+            }
+            else if (gauche == true){
+                player.anims.play('coter_mort', true);
+                player.setFlipX(false);
+                player.setTint(0xff0000);
             }
             else if (droite == true){
-                player.setVelocityX(vitesseDash);
+                player.anims.play('coter_mort', true);
+                player.setFlipX(true);
+                player.setTint(0xff0000);
             }
             else if (dos == true){
-                player.setVelocityY(-vitesseDash);
+                player.anims.play('dos_mort', true);
+                player.setTint(0xff0000);
             }
-            else if (face == true){
-                player.setVelocityY(vitesseDash);
+            if (cursors2.R.isDown){
+                this.scene.restart();
+                gameOver = false;
             }
-        }*/
+        }
+      /////////////////////////////   
+     // ACTIVE BRECHE   //////////
+    /////////////////////////////
         if (cursors2.Q.isDown && brecheRecup && gameOver == false){
-
+            
+            player.anims.play('breche', true);
             barreVie = this.add.image(400,100,'bareDeVie_breche')
                 .setDepth(1)
                 .setScrollFactor(0); 
 
             player.setVelocity(0);
             breche = true;
-            player.setTint(6754E1);
+            
+            //player.setTint(6754E1);
 
         }
         else if (invincible == false){
@@ -592,7 +667,9 @@ class BatimentBreche extends Phaser.Scene{
             player.setTint(0xffffff);
         }
         
-
+      /////////////////////////////   
+     //POSE MINE  ////////////////
+    /////////////////////////////
         if (poseMine && gameOver == false) {
             if ( nbMine > 0){
                 nbMine -= 1;
@@ -601,6 +678,7 @@ class BatimentBreche extends Phaser.Scene{
                 mine.body.height = zoneActionMine;
                 mine.body.width = zoneActionMine;
                 mine.body.setOffset(-((zoneActionMine/2)-(48/2)),-((zoneActionMine/2)-(48/2)));
+                mine.anims.play('mine_pose', true);
             } 
         }
       /////////////////////////////   
@@ -685,7 +763,10 @@ class BatimentBreche extends Phaser.Scene{
         this.physics.add.overlap(this.enemies, mine, ActiveMine, null, this);
 
         function ActiveMine (mine,enemie){
-            mine.destroy();
+            mine.anims.play('mine_explose', true);
+            //mine.destroy();
+            mine.body.height = 0;
+            mine.body.width = 0;
             enemie.destroy();
             aleatoire = Math.floor(Math.random() * Math.floor(3));
             if (aleatoire == 0){
@@ -723,13 +804,7 @@ class BatimentBreche extends Phaser.Scene{
                 pv ++;
             }
         }
-      /* function ActiveBombe (bombe,enemie){
 
-            if (degatBombe == true){
-                enemie.disableBody(true, true);
-            }
-            affichetest.setText('TEST : ' + degatBombe);
-        }*/
         this.physics.add.overlap(this.enemies, player,degat,null, this);
 
         function degat( player, enemies){
@@ -740,6 +815,7 @@ class BatimentBreche extends Phaser.Scene{
                 affichePV.setText('PV : ' + pv);
             }
         }
+        
         if(invincible == true){
             compteur-- ;
             if(compteur == 0){
