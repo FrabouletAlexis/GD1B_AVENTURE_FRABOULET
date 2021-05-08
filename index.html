@@ -4,14 +4,13 @@
     <meta charset="UTF-8" />
     <title>Ville morte</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.54.0/dist/phaser.js"></script>
-    <script src="SceneOne.js"></script>
-    <script src="SceneTwo.js"></script>
-    <script src="SceneThree.js"></script>
     <script src="Tuto.js"></script>
     <script src="Ville.js"></script>
     <script src="BatimentBreche.js"></script>
     <script src="BatimentClef.js"></script>
     <script src="BatimentFin.js"></script>
+    <script src="EcranTitre.js"></script>
+    <script src="EcranFin.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -37,7 +36,7 @@ var config = {
             debug: true
         }
     },
-    scene: [ Tuto,BatimentBreche,BatimentFin,Ville, BatimentClef,SceneOne, SceneTwo,SceneThree]
+    scene: [ Tuto,BatimentBreche,EcranTitre,Ville,BatimentFin,EcranFin,BatimentClef]
 };
 
 var game = new Phaser.Game(config);
